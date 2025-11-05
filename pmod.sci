@@ -162,20 +162,24 @@ end
     if modulo(n, 10)<>0 then
         error("O comprimento do texto cifrado ("+string(n)+") não é múltiplo de 10.");
     end
-// Colunas são blocos (10 x T)
-Cmat = matrix(Cnums, 10, -1);
 
-// Inversa de K (mod 29)
-Kinv = inv_mod_matrix(K, m);
+    // Número de blocos de 10 símbolos
+    nblocks = n/10;
 
-// *** ATENÇÃO: cifra foi gerada como C = P * K (vetor-linha) ***
-// Então a decodificação correta é P = C * K^{-1} (à direita).
-// Como Cmat está 10xT com blocos em colunas, transponha, multiplique à direita e destroque:
-Pmat = pmod( (Cmat') * Kinv , m )';
- 
-// Volta para texto
-Pnums = matrix(Pmat, 1, -1);
-Ptxt  = nums_to_text(Pnums);
+    // Colunas são blocos (10 x nblocks)
+    Cmat = matrix(Cnums, 10, nblocks);
+
+    // Inversa de K (mod 29)
+    Kinv = inv_mod_matrix(K, m);
+
+    // *** ATENÇÃO: cifra foi gerada como C = P * K (vetor-linha) ***
+    // Então a decodificação correta é P = C * K^{-1} (à direita).
+    // Como Cmat está 10xT com blocos em colunas, transponha, multiplique à direita e destroque:
+    Pmat = pmod( (Cmat') * Kinv , m )';
+
+    // Volta para texto
+    Pnums = matrix(Pmat, 1, n);
+    Ptxt  = nums_to_text(Pnums);
 
     // Exibe resultado
     disp("===== TEXTO DECIFRADO =====");
